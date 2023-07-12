@@ -1,8 +1,8 @@
 const User = require('../models/user');
 
-const validate = (error, res) => {
+const errorCatch = (error, res) => {
   if (error.name === 'CastError') {
-    return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+    return res.status(404).send({ message: 'Запрашиваемый объект не найден' });
   }
   if (error.name === 'ValidationError') {
     return res.status(400).send({ message: 'Некорректно заполнено одно из полей' });
@@ -19,7 +19,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch((error) => validate(error, res));
+    .catch((error) => errorCatch(error, res));
 };
 
 module.exports.createUser = (req, res) => {
@@ -27,7 +27,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((error) => validate(error, res));
+    .catch((error) => errorCatch(error, res));
 };
 
 module.exports.updateUser = (req, res) => {
@@ -35,7 +35,7 @@ module.exports.updateUser = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch((error) => validate(error, res));
+    .catch((error) => errorCatch(error, res));
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -43,5 +43,5 @@ module.exports.updateAvatar = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((user) => res.send({ data: user }))
-    .catch((error) => validate(error, res));
+    .catch((error) => errorCatch(error, res));
 };
