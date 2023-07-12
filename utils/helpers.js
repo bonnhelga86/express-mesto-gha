@@ -12,3 +12,12 @@ module.exports.errorCatch = (error, res) => {
   }
   return res.status(500).send({ message: 'Произошла ошибка' });
 };
+
+module.exports.getResponseData = (data, res) => {
+  if (!data) {
+    const err = new Error();
+    err.name = 'CastError';
+    throw err;
+  }
+  res.send({ data });
+};

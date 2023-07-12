@@ -1,14 +1,5 @@
 const User = require('../models/user');
-const { errorCatch } = require('../utils/error');
-
-const getResponseData = (data, res) => {
-  if (!data) {
-    const err = new Error();
-    err.name = 'CastError';
-    throw err;
-  }
-  res.send({ data });
-};
+const { errorCatch, getResponseData } = require('../utils/helpers');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
