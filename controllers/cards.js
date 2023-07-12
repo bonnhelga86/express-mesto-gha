@@ -14,13 +14,13 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    .catch((error) => res.send({ message: error }));
+    .catch((error) => errorCatch(error, res));
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .populate('owner')
-    .then((card) => res.send({ data: card }))
+    .then((card) => getResponseData(card, res))
     .catch((error) => errorCatch(error, res));
 };
 
