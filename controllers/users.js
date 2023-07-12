@@ -1,6 +1,15 @@
 const User = require('../models/user');
 const { errorCatch } = require('../utils/error');
 
+const getResponseData = (data, res) => {
+  if (!data) {
+    const err = new Error();
+    err.name = 'CastError';
+    throw err;
+  }
+  res.send({ data });
+};
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -9,7 +18,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
+    .then((user) => getResponseData(user, res))
     .catch((error) => errorCatch(error, res));
 };
 
