@@ -1,22 +1,26 @@
 const mongoose = require('mongoose');
 
 const errorsCode = {
-  400: 'Некорректно заполнено одно из полей',
-  404: 'Запрашиваемый объект не найден',
-  500: 'На сервере произошла ошибка',
+  invalidField: { key: 400, message: 'Некорректно заполнено одно из полей' },
+  invalidObject: { key: 404, message: 'Запрашиваемый объект не найден' },
+  invalidServer: { key: 500, message: 'На сервере произошла ошибка' },
 };
 
 module.exports.errorCatch = (error, res) => {
   if (error.path === '_id' && !mongoose.Types.ObjectId.isValid(error.value)) {
-    return res.status(400).send({ message: errorsCode[res.status] });
+    return res.status(errorsCode.invalidField.key)
+      .send({ message: errorsCode.invalidField.message });
   }
   if (error.name === 'ValidationError') {
-    return res.status(400).send({ message: errorsCode[res.status] });
+    return res.status(errorsCode.invalidField.key)
+      .send({ message: errorsCode.invalidField.message });
   }
   if (error.name === 'CastError') {
-    return res.status(404).send({ message: errorsCode[res.status] });
+    return res.status(errorsCode.invalidObject.key)
+      .send({ message: errorsCode.invalidObject.message });
   }
-  return res.status(500).send({ message: errorsCode[res.status] });
+  return res.status(errorsCode.invalidServer.key)
+    .send({ message: errorsCode.invalidServer.message });
 };
 
 module.exports.getResponseData = (data, res) => {
