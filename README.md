@@ -14,3 +14,8 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+Подготовленный бэкенд для проекта __Место-React__. 
+Для разработки серверного кода использовался фреймворк __Express__.
+
+Ссылка на репозиторий [express-mesto-gha](https://github.com/bonnhelga86/express-mesto-gha).
