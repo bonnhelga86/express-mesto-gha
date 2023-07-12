@@ -31,3 +31,5 @@ module.exports.getResponseData = (data, res) => {
   }
   res.send({ data });
 };
+
+module.exports.errorsCode = errorsCode;

@@ -1,11 +1,12 @@
 const Card = require('../models/card');
-const { errorCatch, getResponseData } = require('../utils/helpers');
+const { errorCatch, getResponseData, errorsCode } = require('../utils/helpers');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('owner')
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => res.status(errorsCode.invalidServer.key)
+      .send({ message: errorsCode.invalidServer.message }));
 };
 
 module.exports.createCard = (req, res) => {

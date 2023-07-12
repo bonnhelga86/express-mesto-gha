@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { errorCatch } = require('./utils/helpers');
 
 const { PORT = 3000 } = process.env;
 
@@ -25,7 +26,9 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Путь не найден' });
+  const err = new Error();
+  err.name = 'CastError';
+  errorCatch(err, res);
 });
 
 app.listen(PORT);
