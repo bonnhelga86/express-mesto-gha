@@ -6,7 +6,7 @@ const errorsCode = {
   invalidServer: { key: 500, message: 'На сервере произошла ошибка' },
 };
 
-module.exports.errorCatch = (error, res) => {
+const errorCatch = (error, res) => {
   if (error instanceof mongoose.Error.ValidationError
     || error instanceof mongoose.Error.CastError) {
     return res.status(errorsCode.invalidField.key)
@@ -20,4 +20,13 @@ module.exports.errorCatch = (error, res) => {
     .send({ message: errorsCode.invalidServer.message });
 };
 
-module.exports.errorsCode = errorsCode;
+function normalizeAnswer(res) {
+  this.then((data) => res.send({ data }))
+    .catch((error) => errorCatch(error, res));
+}
+
+module.exports = {
+  errorsCode,
+  errorCatch,
+  normalizeAnswer,
+};

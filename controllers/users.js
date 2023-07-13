@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { errorCatch, errorsCode } = require('../utils/helpers');
+const { errorsCode, normalizeAnswer } = require('../utils/helpers');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -9,31 +9,27 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.userId).orFail()
-    .then((users) => res.send({ data: users }))
-    .catch((error) => errorCatch(error, res));
+  normalizeAnswer.call(User.findById(req.params.userId).orFail(), res);
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((error) => errorCatch(error, res));
+  normalizeAnswer.call(User.create(req.body), res);
 };
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
-    .catch((error) => errorCatch(error, res));
+  normalizeAnswer
+    .call(User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true },
+    ), res);
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
-    .then((user) => res.send({ data: user }))
-    .catch((error) => errorCatch(error, res));
+  normalizeAnswer
+    .call(User.findByIdAndUpdate(req.user._id, { avatar }, { new: true }), res);
 };
