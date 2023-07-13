@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { errorCatch, getResponseData, errorsCode } = require('../utils/helpers');
+const { errorCatch, errorsCode } = require('../utils/helpers');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -9,8 +9,8 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => getResponseData(user, res))
+  User.findById(req.params.userId).orFail()
+    .then((users) => res.send({ data: users }))
     .catch((error) => errorCatch(error, res));
 };
 

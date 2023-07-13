@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { errorCatch, getResponseData, errorsCode } = require('../utils/helpers');
+const { errorCatch, errorsCode } = require('../utils/helpers');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -19,22 +19,24 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findByIdAndRemove(req.params.cardId).orFail()
     .populate('owner')
-    .then((card) => getResponseData(card, res))
+    .then((card) => res.send({ data: card }))
     .catch((error) => errorCatch(error, res));
 };
 
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail()
     .populate('owner')
-    .then((card) => getResponseData(card, res))
+    .then((card) => res.send({ data: card }))
     .catch((error) => errorCatch(error, res));
 };
 
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail()
     .populate('owner')
-    .then((card) => getResponseData(card, res))
+    .then((card) => res.send({ data: card }))
     .catch((error) => errorCatch(error, res));
 };

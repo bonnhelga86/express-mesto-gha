@@ -7,29 +7,17 @@ const errorsCode = {
 };
 
 module.exports.errorCatch = (error, res) => {
-  if (error.path === '_id' && !mongoose.Types.ObjectId.isValid(error.value)) {
+  if (error instanceof mongoose.Error.ValidationError
+    || error instanceof mongoose.Error.CastError) {
     return res.status(errorsCode.invalidField.key)
       .send({ message: errorsCode.invalidField.message });
   }
-  if (error.name === 'ValidationError') {
-    return res.status(errorsCode.invalidField.key)
-      .send({ message: errorsCode.invalidField.message });
-  }
-  if (error.name === 'CastError') {
+  if (error instanceof mongoose.Error.DocumentNotFoundError) {
     return res.status(errorsCode.invalidObject.key)
       .send({ message: errorsCode.invalidObject.message });
   }
   return res.status(errorsCode.invalidServer.key)
     .send({ message: errorsCode.invalidServer.message });
-};
-
-module.exports.getResponseData = (data, res) => {
-  if (!data) {
-    const err = new Error();
-    err.name = 'CastError';
-    throw err;
-  }
-  res.send({ data });
 };
 
 module.exports.errorsCode = errorsCode;
