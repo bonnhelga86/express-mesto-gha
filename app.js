@@ -26,8 +26,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('*', (req, res) => {
-  const err = new Error();
-  err.name = 'CastError';
+  const err = new Error.DocumentNotFoundError();
   errorCatch(err, res);
 });
 
