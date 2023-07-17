@@ -9,6 +9,7 @@
          "peerDependencies": false,
          "packageDir": "./"
       }
-    ]
+    ],
+    "linebreak-style":"off"
   }
 }
