@@ -1,8 +1,12 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { errorCatch, errorsCode, getResponseData } = require('../utils/helpers');
+const {
+  errorCatch,
+  errorsCode,
+  getResponseData,
+  authorizationError,
+} = require('../utils/helpers');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -12,7 +16,6 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getCurrentUser = (req, res) => {
-  console.log(req.user);
   getResponseData.call(User.findById(req.user).orFail(), res);
 };
 
@@ -53,26 +56,30 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  User.findOne({ email })
-    .orFail()
+  User.findOne({ email }).select('+password')
+    .orFail(() => {
+      authorizationError();
+    })
     .then((user) => {
       if (!user) {
-        errorCatch(new mongoose.Error.AuthorizationError(), res);
+        authorizationError();
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            errorCatch(new mongoose.Error.AuthorizationError(), res);
+            authorizationError();
           }
           return user;
         });
     })
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'user-secret-key', { expiresIn: '7d' });
       return res.cookie('jwtToken', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
       }).end();
     })
-    .catch((error) => res.send({ data: error }));
+    .catch((error) => {
+      errorCatch(error, res);
+    });
 };

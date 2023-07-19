@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 
 const errorsCode = {
   invalidField: { key: 400, message: 'Некорректно заполнено одно из полей' },
-  invalidAuth: { key: 401, message: 'Неправильные почта или пароль' },
+  invalidAuth: { key: 401, message: 'Ошибка авторизации' },
   invalidObject: { key: 404, message: 'Запрашиваемый объект не найден' },
   invalidServer: { key: 500, message: 'На сервере произошла ошибка' },
 };
 
 const errorCatch = (error, res) => {
+  if (error.name === 'AuthorizationError') {
+    return res.status(errorsCode.invalidAuth.key)
+      .send({ message: errorsCode.invalidAuth.message });
+  }
   if (error instanceof mongoose.Error.ValidationError
     || error instanceof mongoose.Error.CastError) {
     return res.status(errorsCode.invalidField.key)
       .send({ message: errorsCode.invalidField.message });
-  }
-  if (error instanceof mongoose.Error.AuthorizationError) {
-    return res.status(errorsCode.invalidAuth.key)
-      .send({ message: errorsCode.invalidAuth.message });
   }
   if (error instanceof mongoose.Error.DocumentNotFoundError) {
     return res.status(errorsCode.invalidObject.key)
@@ -30,8 +30,15 @@ function getResponseData(res) {
     .catch((error) => errorCatch(error, res));
 }
 
+function authorizationError() {
+  const error = new Error();
+  error.name = 'AuthorizationError';
+  throw error;
+}
+
 module.exports = {
   errorsCode,
   errorCatch,
   getResponseData,
+  authorizationError,
 };
