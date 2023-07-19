@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const { errorCatch } = require('../utils/helpers');
 
-module.exports = (req, res, next) => {
+module.exports.auth = (req, res, next) => {
   const { jwtToken } = req.cookies;
   if (!jwtToken) {
     errorCatch(new mongoose.Error.AuthorizationError(), res);

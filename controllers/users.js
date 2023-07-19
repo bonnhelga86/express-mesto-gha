@@ -11,6 +11,10 @@ module.exports.getUsers = (req, res) => {
       .send({ message: errorsCode.invalidServer.message }));
 };
 
+module.exports.getCurrentUser = (req, res) => {
+  getResponseData.call(User.findById(req.user).orFail(), res);
+};
+
 module.exports.getUser = (req, res) => {
   getResponseData.call(User.findById(req.params.userId).orFail(), res);
 };
