@@ -1,5 +1,6 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
-const { errorsCode, getResponseData } = require('../utils/helpers');
+const { errorCatch, errorsCode, getResponseData } = require('../utils/helpers');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -11,14 +12,20 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
 
   getResponseData.call(Card.create({ name, link, owner }), res);
 };
 
 module.exports.deleteCard = (req, res) => {
-  getResponseData.call(Card.findByIdAndRemove(req.params.cardId).orFail()
-    .populate('owner'), res);
+  Card.findById(req.params.cardId).orFail()
+    .then((card) => {
+      if (!card.owner._id.equals(req.user._id)) {
+        errorCatch(new mongoose.Error.AuthorizationError(), res);
+      }
+      getResponseData.call(Card.findByIdAndRemove(req.params.cardId).orFail()
+        .populate('owner'), res);
+    });
 };
 
 module.exports.likeCard = (req, res) => {

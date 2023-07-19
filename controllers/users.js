@@ -12,6 +12,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getCurrentUser = (req, res) => {
+  console.log(req.user);
   getResponseData.call(User.findById(req.user).orFail(), res);
 };
 
@@ -52,7 +53,6 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
   User.findOne({ email })
     .orFail()
     .then((user) => {
