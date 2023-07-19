@@ -55,13 +55,20 @@ module.exports.login = (req, res) => {
       if (!user) {
         errorCatch(new mongoose.Error.AuthorizationError(), res);
       }
-      return bcrypt.compare(password, user.password);
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            errorCatch(new mongoose.Error.AuthorizationError(), res);
+          }
+          return user;
+        });
     })
-    .then((matched) => {
-      if (!matched) {
-        errorCatch(new mongoose.Error.AuthorizationError(), res);
-      }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      return res.cookie('jwtToken', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      }).end();
     })
     .catch((error) => res.send({ data: error }));
 };

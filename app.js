@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 const { PORT = 3000 } = process.env;
 
@@ -11,6 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   req.user = {
