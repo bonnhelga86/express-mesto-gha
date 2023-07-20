@@ -1,26 +1,46 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { NotFoundError } = require('../errors/not-found-error');
+const { ValidationError } = require('../errors/validation-error');
+
 const {
   errorCatch,
-  errorsCode,
   getResponseData,
   authorizationError,
 } = require('../utils/helpers');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(errorsCode.invalidServer.key)
-      .send({ message: errorsCode.invalidServer.message }));
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
-  getResponseData.call(User.findById(req.user).orFail(), res);
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((data) => {
+      res.send({ data });
+    })
+    .catch((next));
 };
 
-module.exports.getUser = (req, res) => {
-  getResponseData.call(User.findById(req.params.userId).orFail(), res);
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.params.userId)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((data) => res.send({ data }))
+    .catch((error) => {
+      if (error instanceof mongoose.Error.CastError) {
+        next(new ValidationError('Некорректно заполнено одно из полей'));
+        return;
+      }
+      next({ data: error });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -57,9 +77,7 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
-    .orFail(() => {
-      authorizationError();
-    })
+    .orFail(authorizationError)
     .then((user) => {
       if (!user) {
         authorizationError();
