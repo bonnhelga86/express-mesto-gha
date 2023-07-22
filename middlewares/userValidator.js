@@ -40,9 +40,19 @@ const updateUserValidator = (req, res, next) => {
   next();
 };
 
+const updateAvatarValidator = (req, res, next) => {
+  const regex = /^https?:\/\/(www\.)?[a-z0-9-]{2,}\.(\S)*/gm;
+  const matched = regex.test(req.body.avatar);
+  if (!matched) {
+    throw new ValidationError('Некорректно заполнено поле avatar');
+  }
+  next();
+};
+
 module.exports = {
   loginValidator,
   createUserValidator,
   userIdValidator,
   updateUserValidator,
+  updateAvatarValidator,
 };

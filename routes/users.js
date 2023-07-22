@@ -4,6 +4,7 @@ const {
   createUserValidator,
   userIdValidator,
   updateUserValidator,
+  updateAvatarValidator,
 } = require('../middlewares/userValidator');
 const { auth } = require('../middlewares/auth');
 const {
@@ -25,6 +26,6 @@ router.get('/', getUsers);
 router.get('/me', getCurrentUser);
 router.get('/:userId', userIdValidator, getUser);
 router.patch('/me', updateUserValidator, updateUser);
-router.patch('/me/avatar', updateAvatar);
+router.patch('/me/avatar', updateAvatarValidator, updateAvatar);
 
 module.exports = router;
