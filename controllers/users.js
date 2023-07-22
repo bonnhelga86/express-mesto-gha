@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { NotFoundError } = require('../errors/not-found-error');
-const { ValidationError } = require('../errors/validation-error');
 const { DuplicateError } = require('../errors/duplicate-error');
 const { AuthorizationError } = require('../errors/authorization-error');
 
@@ -35,10 +33,6 @@ module.exports.getUser = async (req, res, next) => {
     user = await User.findById(req.params.userId);
     if (!user) throw new NotFoundError('Пользователь не найден');
   } catch (error) {
-    if (error instanceof mongoose.Error.CastError) {
-      next(new ValidationError('Некорректно заполнено одно из полей'));
-      return;
-    }
     next(error);
     return;
   }
