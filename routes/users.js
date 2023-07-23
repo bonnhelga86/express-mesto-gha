@@ -1,8 +1,5 @@
 const router = require('express').Router();
-// const { celebrate, Joi } = require('celebrate');
 const {
-  loginValidator,
-  createUserValidator,
   userIdValidator,
   updateUserValidator,
   updateAvatarValidator,
@@ -17,9 +14,6 @@ const {
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
-
-router.post('/signin', loginValidator, login);
-router.post('/signup', createUserValidator, createUser);
 
 router.use(auth);
 
