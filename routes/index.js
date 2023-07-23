@@ -3,6 +3,10 @@ const {
   loginValidator,
   createUserValidator,
 } = require('../middlewares/userValidator');
+const {
+  login,
+  createUser,
+} = require('../controllers/users');
 const { NotFoundError } = require('../errors/not-found-error');
 
 router.post('/signin', loginValidator, login);
