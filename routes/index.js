@@ -1,9 +1,10 @@
 const routes = require('express').Router();
-const mongoose = require('mongoose');
-const { errorCatch } = require('../utils/helpers');
+const { NotFoundError } = require('../errors/not-found-error');
 
 routes.use('/users', require('./users'));
 routes.use('/cards', require('./cards'));
 
-routes.use('*', (req, res) => errorCatch(new mongoose.Error.DocumentNotFoundError(), res));
+routes.use('*', () => {
+  throw new NotFoundError('Страница не найдена');
+});
 module.exports = routes;

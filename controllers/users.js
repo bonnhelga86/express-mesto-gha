@@ -1,9 +1,11 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { NotFoundError } = require('../errors/not-found-error');
 const { DuplicateError } = require('../errors/duplicate-error');
 const { AuthorizationError } = require('../errors/authorization-error');
+const { ValidationError } = require('../errors/validation-error');
 
 module.exports.getUsers = async (req, res, next) => {
   let users;
