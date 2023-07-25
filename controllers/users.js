@@ -117,5 +117,5 @@ module.exports.login = async (req, res, next) => {
   res.cookie('jwtToken', token, {
     maxAge: 3600000 * 24 * 7,
     httpOnly: true,
-  }).res.send({ data: { email: user.email } });
+  }).send({ data: { email: user.email } });
 };
