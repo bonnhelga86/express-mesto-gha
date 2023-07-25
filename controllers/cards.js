@@ -1,6 +1,5 @@
 const Card = require('../models/card');
 const { NotFoundError } = require('../errors/not-found-error');
-const { AuthorizationError } = require('../errors/authorization-error');
 const { ForbiddenError } = require('../errors/forbidden-error');
 
 module.exports.getCards = async (req, res, next) => {
