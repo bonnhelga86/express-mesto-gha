@@ -5,7 +5,6 @@ const User = require('../models/user');
 const { NotFoundError } = require('../errors/not-found-error');
 const { DuplicateError } = require('../errors/duplicate-error');
 const { AuthorizationError } = require('../errors/authorization-error');
-const { ValidationError } = require('../errors/validation-error');
 
 module.exports.getUsers = async (req, res, next) => {
   let users;
@@ -60,7 +59,12 @@ module.exports.createUser = async (req, res, next) => {
     next(error);
     return;
   }
-  res.send({ data: user });
+  res.send({ data: {
+    email: user.email,
+    name: user.name,
+    about: user.about,
+    avatar: user.avatar,
+  }});
 };
 
 module.exports.updateUser = async (req, res, next) => {
@@ -113,5 +117,5 @@ module.exports.login = async (req, res, next) => {
   res.cookie('jwtToken', token, {
     maxAge: 3600000 * 24 * 7,
     httpOnly: true,
-  }).end();
+  }).res.send({ data: { email: user.email } });
 };

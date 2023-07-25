@@ -3,7 +3,6 @@ const {
   createCardValidator,
   cardIdValidator,
 } = require('../middlewares/cardValidator');
-const { auth } = require('../middlewares/auth');
 const {
   getCards,
   createCard,
@@ -11,8 +10,6 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
-
-router.use(auth);
 
 router.get('/', getCards);
 router.post('/', createCardValidator, createCard);

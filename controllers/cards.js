@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const { NotFoundError } = require('../errors/not-found-error');
 const { AuthorizationError } = require('../errors/authorization-error');
+const { ForbiddenError } = require('../errors/forbidden-error');
 
 module.exports.getCards = async (req, res, next) => {
   let cards;
@@ -31,7 +32,7 @@ module.exports.deleteCard = async (req, res, next) => {
   try {
     card = await Card.findById(req.params.cardId).populate('owner');
     if (!card) throw new NotFoundError('Карточка не найдена');
-    if (!card.owner._id.equals(req.user._id)) throw new AuthorizationError('Вы можете удалять только свои карточки');
+    if (!card.owner._id.equals(req.user._id)) throw new ForbiddenError('Вы можете удалять только свои карточки');
     await Card.findByIdAndRemove(req.params.cardId);
   } catch (error) {
     next(error);

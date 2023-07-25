@@ -4,18 +4,13 @@ const {
   updateUserValidator,
   updateAvatarValidator,
 } = require('../middlewares/userValidator');
-const { auth } = require('../middlewares/auth');
 const {
   getUsers,
   getCurrentUser,
   getUser,
-  login,
-  createUser,
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
-
-router.use(auth);
 
 router.get('/', getUsers);
 router.get('/me', getCurrentUser);

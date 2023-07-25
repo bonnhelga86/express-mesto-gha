@@ -1,7 +1,5 @@
 const validator = require('validator');
 const { celebrate, Joi } = require('celebrate');
-// const mongoose = require('mongoose');
-const { ValidationError } = require('../errors/validation-error');
 
 const loginValidator = celebrate({
   body: Joi.object().keys({
@@ -37,12 +35,14 @@ const createUserValidator = celebrate({
 
 const userIdValidator = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    userId: Joi.string().required().alphanum().length(24),
   }),
 }, {
   abortEarly: false,
   messages: {
     'string.empty': 'Не заполнено обязательное поле!',
+    'string.length': 'Не валидный id!',
+    'string.alphanum': 'Не валидный id!',
   },
 });
 
