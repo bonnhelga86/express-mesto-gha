@@ -19,7 +19,7 @@ const createUserValidator = celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(new RegExp('^https?:\/\/(www\.)?[a-z0-9-]{2,}\.[a-z]{2,6}(\S)*')),
+    avatar: Joi.string().pattern(/^https?:\/\/(www.)?[a-z0-9-]{2,}.[a-z]{2,6}(S)*/),
   }),
 }, {
   abortEarly: false,
@@ -34,7 +34,7 @@ const createUserValidator = celebrate({
 
 const userIdValidator = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().alphanum().length(24),
+    userId: Joi.string().required().hex().length(24),
   }),
 }, {
   abortEarly: false,
@@ -61,7 +61,7 @@ const updateUserValidator = celebrate({
 
 const updateAvatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(new RegExp('^https?:\/\/(www\.)?[a-z0-9-]{2,}\.[a-z]{2,6}(\S)*')),
+    avatar: Joi.string().required().pattern(/^https?:\/\/(www.)?[a-z0-9-]{2,}.[a-z]{2,6}(S)*/),
   }),
 }, {
   abortEarly: false,
